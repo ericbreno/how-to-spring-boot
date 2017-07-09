@@ -2,7 +2,7 @@
 
 Olá! Neste tutorial pretendo explicar os pontos básicos sobre a criação
 de uma api REST utilizando o framework SpringBoot, assim como a integração
-com um Banco de Dados (Serão apresentados MySQL e H2, explicarei a diferença).
+com um Banco de Dados (Será utilizado o H2, falarei sobre).
 
 Cada um dos ponto será explicado de forma superficial, de forma que seja passado
 apenas o necessário para se entender como todo o sistema funciona. No tutorial
