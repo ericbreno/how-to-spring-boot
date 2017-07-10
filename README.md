@@ -4,11 +4,11 @@ Olá! Neste tutorial pretendo explicar os pontos básicos sobre a criação
 de uma api REST utilizando o framework SpringBoot, assim como a integração
 com um Banco de Dados (Será utilizado o H2, falarei sobre).
 
-Cada um dos ponto será explicado de forma superficial, de forma que seja passado
+Cada um dos pontos será explicado de forma superficial, de forma que seja passado
 apenas o necessário para se entender como todo o sistema funciona. No tutorial
 será utilizada a IDE Eclipse Mars, com Java 8 e SpringBoot. 
 
-Recomendo a utilização do **Postman**, que pode ser entronado na loja de apps do Chrome,
+Recomendo a utilização do **Postman**, que pode ser encontrado na loja de apps do Chrome,
 mas que roda independente do navegador. O Postman é uma ferramenta que vai nos ajudar
 a testar a API, realizando as requisições. O Postman será utilizado nos exemplos.
 
@@ -63,10 +63,10 @@ e matar o processo Java.
 ## Criando nosso primeiro endpoint - Hello Word
 
 Agora que já temos a base para aplicação pronta, podemos começar a fazer o que realmente interessa, a API Rest.
-Se você não sabe o que é uma API Rest, recomendo ler [aqui](https://pt.stackoverflow.com/questions/45783/o-que-%C3%A9-rest-e-restful), 
+Se você não sabe o que é uma API Rest, recomendo ler [isso](https://pt.stackoverflow.com/questions/45783/o-que-%C3%A9-rest-e-restful), 
 e depois continuar.
 
-Seu próximo passo é criar uma classe, no exemplo vou utilizar a classe InterfaceRest.java,
+Seu próximo passo é criar uma classe, no exemplo vou utilizar a classe *InterfaceRest.java*,
 devemos anotar a classe com **@RestController**. Esta anotação faz o Spring identificar a classe como
 um controlador Rest, que podemos adicionar enpoints para nossas funcionalidades.
 
@@ -77,13 +77,13 @@ public class InterfaceRest {
 ```
 
 Dentro da classe vamos criar um método chamado helloWord, que retorna String e não tem parâmetros. 
-O método deve ser anotado com **@RequestMapping(value = "/teste", method = RequestMethod.GET)**,
-a anotação **@RequestMapping** faz com que o método seja relacionado à um endpoint, ou, 
-ao fazermos uma requisição no endpoint "/teste" o método seja executado. O parâmetro **value** da anotação
+O método deve ser anotado com **@RequestMapping(value = "/teste", method = RequestMethod.GET)**. 
+A anotação **@RequestMapping** faz com que o método seja relacionado à um endpoint, ou, 
+ao fazermos uma requisição no endpoint *"/teste"* o método seja executado. O parâmetro **value** da anotação
 define qual endpoint (como String) o método está relacionado.
 
 Na anotação nós temos outro parâmetro, o **method**, que indica qual método HTTP (O tipo da requisição)
-o endpoint e método Java está relacionado. Logo, um método java está associado à um endpoint e um tipo
+o endpoint e o método Java está relacionado. Logo, um método java está associado à um endpoint e um tipo
 de requisição. No nosso caso, o método vai aceitar requisições de **GET** para o endpoint de **"/teste"**.
 
 No corpo do método você deve fazer apenas ele retornar uma String qualquer, ex: "Oi, eu estou funcionando!".
@@ -137,7 +137,7 @@ em **/usuario/consulta/eric**, por exemplo.
 **@PathVariable**: Anota um parâmetro do método que está relacionado à um endpoint. Os endpoints podem ter variáveis, ou,
 pedaços não fixos para a requisição, como no exemplo, utilizamos "/consulta/**{nome}**", onde a variável
 é definida dentro de {}, e recuperada no método se identificando o parâmetro com @PathVariable. Se realizarmos
-uma requisição get **get** em /usuario/consulta/eric, veremos que no método, a variável nome vai ter valor "eric". Teste isso.
+uma requisição **GET** em /usuario/consulta/eric, veremos que no método, a variável *nome* vai ter valor "eric". Teste isso.
 Você pode fazer o método retornar uma String, sendo essa o parâmetro, para fins de debug.
 
 ## Enviando informações para nossa API - POST, PUT
@@ -285,10 +285,12 @@ Para a comunicação com o BD vamos utilizar uma camada específica, que chamare
 ela realizará todas as operações com o BD.
 
 Crie um DAO, no exemplo utilizarei o TesteDAO. Sua classe DAO deve estar anotada com **@Repository**, indicando que
-esta classe é um classe Repositório(de comunicação com o BD). Dentro de sua classe DAO você deve *injetar* o objeto
-do Hibernate que vai tratar as operações, da seguinte forma:
+esta classe é um classe Repositório(de comunicação com o BD). Você também deve adicionar no DAO a anotação **@Transactional**,
+que vai fazer com que as operações (execuções do métodos da classe) sejam tratadas da forma de [transações](https://pt.wikipedia.org/wiki/Transa%C3%A7%C3%A3o_em_base_de_dados).
+Dentro de sua classe DAO você deve *injetar* o objeto do Hibernate que vai tratar as operações, da seguinte forma:
 
 ```
+@Transactional
 @Repository
 public class TesteDAO {
     @PersistenceContext
@@ -318,19 +320,18 @@ E um para recuperar do BD, aqui criaremos uma Query:
 
 ```
 public ObjetoTeste consultaObjeto(Long id) {
-    TypedQuery<ObjetoTeste> query = em.createTypedQuery("select obj from ObjetoTeste where obj.id = :id");
+    TypedQuery<ObjetoTeste> query = em.createTypedQuery("select obj from ObjetoTeste obj where obj.id = :id");
     query.setParameter("id", id);
     return query.getSingleResult();
 }
 ```
 
-Note que a sintaxe da query, que é estrutura em HQL (Hibernate Query Language) é parecida com a sintaxe 
-de SQL, mas simplifica a query em alguns casos. Saiba mais sobre HQL aqui. O método **getSingleResult** 
-vai nos retornar o objeto de resultado da consulta, de acordo com o ID passado (falarei sobre ID agora).
+Note que a sintaxe da query, que é estruturada em [HQL](https://docs.jboss.org/hibernate/orm/3.5/reference/pt-BR/html/queryhql.html)(Hibernate Query Language) é parecida com a sintaxe de SQL, mas simplifica a query em alguns casos. O método **getSingleResult** 
+vai nos retornar o objeto de resultado da consulta, de acordo com o ID passado (falarei sobre ID em seguida).
 
 Uma das diferenças do SQL se dá por não consultarmos por tabelas, mas sim por tipos de objetos, como no exemplo,
 estamos pegando dentre ObjetoTeste, o Hibernate consegue distinguir o que estamos buscando por os objetos
-persistidos terem a classe anotada por @Entity.
+persistidos terem a classe anotada por **@Entity**.
 
 Você pode adicionar parâmetros para a busca utilizando **:nomePropriedade**, e realizando a comparação
 como mostrado na query de exemplo acima. Para substituir os parâmetros, deve-se utilizar o método **query.setParameter**.
@@ -339,7 +340,7 @@ Também é possível realizar uma consulta por outros parâmetros, seguindo o ex
 
 ```
 public ObjetoTeste consultaObjeto(Long id, String nomeObjeto) {
-    TypedQuery<ObjetoTeste> query = em.createTypedQuery("select obj from ObjetoTeste where obj.id = :id and obj.nomeObjeto = :nomeObjeto", ObjetoTeste.class);
+    TypedQuery<ObjetoTeste> query = em.createTypedQuery("select obj from ObjetoTeste obj where obj.id = :id and obj.nomeObjeto = :nomeObjeto", ObjetoTeste.class);
     query.setParameter("id", id);
     query.setParameter("nomeObjeto", nomeObjeto);
     return query.getSingleResult();
@@ -367,7 +368,7 @@ ser nula, ex:
 private String nomeUsuario;
 ```
 
-Isso vai fazer com que não seja permitido inserir a propriedade nomeUsuario com valor null, assim como
+Isso vai fazer com que não seja permitido inserir a propriedade nomeUsuario com valor *null*, assim como
 a propriedade será identificada no BD pela coluna **nome_usuario**.
 
 Adicione no seu objeto um campo id do tipo Long, e o anote da seguinte forma:
@@ -378,7 +379,7 @@ Adicione no seu objeto um campo id do tipo Long, e o anote da seguinte forma:
 private Long id;
 ```
 
-Como mencionado acima, a anotação @Id vai fazer com o que campo seja o elemento que vai distinguir dois objetos para
+Como mencionado acima, a anotação **@Id** vai fazer com o que campo seja o elemento que vai distinguir dois objetos para
 o mesmo tipo. A anotação **@GeneratedValue** vai fazer com que ele seja gerado automaticamente, e não precisemos
 nos preocupar em guardar dois objetos do mesmo tipo com um mesmo id. Todas as entidades que forem ser persistidas
 devem ter um ID.
@@ -397,6 +398,20 @@ private TesteDAO dao;
 Você deve adicionar esta injeção na sua classe Rest. Agora, faça com que algum método de POST receba o ObjetoTeste,
 o persista no BD, e em seguida o de GET recupere do BD, passando o id do objeto persistido. Lembre de retornar o objeto
 persistido no POST, para que você possa saber qual o id para a consulta.
+
+Exemplo para os endpoints de POST e GET:
+
+```
+@RequestMapping(value = "/teste/{id}", method = RequestMethod.GET)
+public ObjetoTeste teste(@PathVariable Long id) {
+    return dao.consultar(id);
+}
+
+@RequestMapping(value = "/teste", method = RequestMethod.POST)
+public ObjetoTeste testeReceber(@RequestBody ObjetoTeste objetoRecebido) {
+    return dao.inserir(objetoRecebido);
+}
+```
 
 * Para realizar a consulta por ID, utilize as variáveis de parâmetro do endpoint, e passe a variável para o método de consulta do DAO.
 * Adicione no DAO um método que atualiza uma entidade, este método vai utilizar o **EntityManager.merge**.
@@ -420,7 +435,7 @@ E se quisermos consultar todos os objetos de um usuário, podemos fazer isso com
 
 ```
 public List<ObjetoTeste> consultarObjetosDoUsuario(Long idUsuario) {
-    TypedQuery query = CreateTypedQuery("select obj from ObjetoTeste where obj.idUsuario = :idUsuario", ObjetoTeste.class)
+    TypedQuery query = CreateTypedQuery("select obj from ObjetoTeste obj where obj.idUsuario = :idUsuario", ObjetoTeste.class)
     query.setParameter("idUsuario", idUsuario);
     return query.getResultList();
 }
@@ -432,3 +447,48 @@ ou seja, no dá todas os objetos do usuário.
 ## Finalizando
 Pronto, agora você já tem configurado no seu projeto o H2, utilizando o Hibernate, a classe Rest que se comunica com o DAO
 e realiza as operações com o BD, servidor finalizado!
+
+# Integrando com a parte Web - Servindo arquivos estáticos
+
+Agora que já temos nossa API funcionando com o H2, vamos fazer com que nosso servidor possa
+enviar os arquivos estáticos da parte Web de nosso projeto.
+
+Primeiro, você deve adicionar seus arquivos Web na pasta **src/main/webapp**. Para o tutorial, vamos adicionar
+apenas um arquivo **index.html** com o seguinte:
+
+```
+<h3> Olá, estou funcionando! </h3>
+```
+
+Agora, vamos precisar adicionar uma nova classe para a configuração da forma que os arquivos
+estáticos serão servidos. Crie uma classe de configuração que herde de **WebMvcConfigurerAdapter**
+e sobrescreva o método **addResourceHandlers** da seguinte forma:
+
+```
+@Configuration
+public class Config extends WebMvcConfigurerAdapter {
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/*")
+			.addResourceLocations("/*");
+	}
+}
+```
+
+Execute a aplicação e, através do navegador, entre no link **localhost:8080**, veja que seu conteúdo html
+agora está sendo servido com o próprio Spring.
+
+Com o **addResourceHandler**, nós fazemos com que ao se tente realizar uma requisição em qualquer ponto
+em **/** ele tente servir algum arquivo estático, caso exista, tentando recuperar o arquivo a partir
+da pasta **src/main/webapp**.
+
+Perceba que não precisamos colocar o **/index.html** especificamente na url, por o spring tentar sempre
+achar algum arquivo index.html para a pasta, e então o enviar. Teste adicionar outro arquivo html e o ver
+no navegador, mudando o final da url.
+
+Dessa forma, já podemos servir todos os arquivos que precisemos. Teste adicionar um arquivo JS e o importar no html,
+assim como adicionar subpastas e as acessar a partir do navegador.
+
+## Realizando requisições do cliente para a API
+
