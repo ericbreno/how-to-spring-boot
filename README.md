@@ -492,3 +492,5 @@ assim como adicionar subpastas e as acessar a partir do navegador.
 
 ## Realizando requisições do cliente para a API
 
+Para a parte Web se comunicar a sua API, basta realizar as requisições diretamente nos endpoints, sem
+precisar adicionar o endereço completo (como fazíamos no Postman). :D
