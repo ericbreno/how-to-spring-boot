@@ -17,7 +17,7 @@ Viu algum erro ou tem uma sugestão? Faça um pull-request! :D
 # Iniciando - Maven e POM.xml
 
 Inicialmente, você deve criar um projeto Maven e adicionar o SpringBoot como dependência,
-junto do módulo **starter-web**. Isso pode ser feito através deste [site](start.spring.io),
+junto do módulo **starter-web**. Isso pode ser feito através deste [site](https://start.spring.io),
 basta adicionar a dependência e baixar o zip.
 
 Será gerado um projeto em branco, apenas com uma classe Main e uma estrutura de pacotes
