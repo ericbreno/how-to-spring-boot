@@ -101,6 +101,9 @@ public class InterfaceRest {
 }
 ```
 
+Obs: Todas as classes para o projeto devem estar no mesmo package ou em packages filhos do que está a classe
+Main, caso contrário, o Spring não reconhecerá as classes para adicionar seus recursos corretamente à execução.
+
 ## Recursos? - Responsabilidades diferentes
 
 Agora já podemos criar endpoints que retornam informações através de uma interface Rest, mas podemos
